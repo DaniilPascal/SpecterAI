@@ -1,0 +1,8 @@
+<idea-plugin>
+  <extensions defaultExtensionNs="com.intellij">
+    <lang.inspectionSuppressor language="JavaScript" implementationClass="io.github.daniilpascal.specterai.highlight.AiCommandInspectionSuppressor"/>
+    <lang.inspectionSuppressor language="TypeScript" implementationClass="io.github.daniilpascal.specterai.highlight.AiCommandInspectionSuppressor"/>
+    <annotator language="JavaScript" implementationClass="io.github.daniilpascal.specterai.highlight.AiCommandAnnotator"/>
+    <annotator language="TypeScript" implementationClass="io.github.daniilpascal.specterai.highlight.AiCommandAnnotator"/>
+  </extensions>
+</idea-plugin>

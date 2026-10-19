@@ -1,0 +1,7 @@
+<idea-plugin>
+  
+  <extensions defaultExtensionNs="com.intellij">
+    <lang.inspectionSuppressor language="ObjectiveC" implementationClass="io.github.daniilpascal.specterai.highlight.AiCommandInspectionSuppressor"/>
+    <annotator language="ObjectiveC" implementationClass="io.github.daniilpascal.specterai.highlight.AiCommandAnnotator"/>
+  </extensions>
+</idea-plugin>

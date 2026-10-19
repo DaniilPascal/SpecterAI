@@ -1,0 +1,116 @@
+<idea-plugin>
+  <id>io.github.daniilpascal.specterai</id>
+  <name>SpecterAI</name>
+  <vendor email="105735993+DaniilPascal@users.noreply.github.com" url="https://github.com/DaniilPascal/SpecterAI">DaniilPascal</vendor>
+
+  <description><![CDATA[
+    <h2>SpecterAI</h2>
+    AI swarm coding assistant for <b>IntelliJ IDEA</b>, <b>Android Studio</b>, <b>PyCharm</b>,
+    <b>CLion</b>, <b>WebStorm</b>, <b>GoLand</b>, <b>RustRover</b> and other JetBrains IDEs (2025.1+).<br><br>
+
+    <b>Commands</b><br>
+    Type <code>Specter.AI("…").start(14);</code> or short <code>S.AI("…").start(14);</code> — speed 1..100.<br>
+    Easter egg: <code>Specter.AI.CEO();</code> — signature comment at end of file.<br>
+    Colored DSL: purple keyword, blue prompt, green start.<br>
+    Output language + local fallback templates follow the current file (Java/Kotlin/Python/C/C++/txt/…).<br>
+    Ghost cursors swarm-type AI-generated code (incl. multi-file <code>### file:FooTest.kt</code>).<br>
+    Live <b>Optim N%</b> for Kotlin/Java/Python/JS/Go/C/C++ — click for Explain / Fix with AI.<br>
+    <b>Diff preview</b> before Optim Fix / multi-file swarm — Accept or Reject (Esc = reject).<br>
+    <b>Esc</b> cancels generation, preview, or swarm typing and clears the command queue.<br>
+    Settings: <b>Settings → Tools → SpecterAI</b>. Menu: <b>SpecterAI</b> (top bar).<br><br>
+
+    <b>Privacy</b><br>
+    When an API key is configured, prompts and relevant editor context are sent to the LLM endpoint
+    you choose (default: <a href="https://openrouter.ai">OpenRouter</a>).
+    The API key is stored in the IDE Password Safe and is never bundled with the plugin.
+    Without a key, SpecterAI can use local templates only (no network).
+    Review your provider’s privacy policy before sending proprietary code.
+  ]]></description>
+
+  <change-notes><![CDATA[
+    <h3>1.0.0</h3>
+    <ul>
+      <li>Initial Marketplace-ready release</li>
+      <li>Specter.AI / S.AI swarm commands with queue, Esc cancel, and status-bar progress</li>
+      <li>Optim % hints with Explain / Fix; optional diff preview before edits</li>
+      <li>Multi-IDE support (platform 2025.1+) with optional language packs</li>
+      <li>Stable plugin id <code>io.github.daniilpascal.specterai</code></li>
+    </ul>
+  ]]></change-notes>
+
+  
+  <depends>com.intellij.modules.platform</depends>
+  <depends>com.intellij.modules.lang</depends>
+
+  
+  <depends optional="true" config-file="io.github.daniilpascal.specterai-withJava.xml">com.intellij.modules.java</depends>
+  <depends optional="true" config-file="io.github.daniilpascal.specterai-withKotlin.xml">org.jetbrains.kotlin</depends>
+  <depends optional="true" config-file="io.github.daniilpascal.specterai-withPython.xml">com.intellij.modules.python</depends>
+  <depends optional="true" config-file="io.github.daniilpascal.specterai-withJavaScript.xml">JavaScript</depends>
+  <depends optional="true" config-file="io.github.daniilpascal.specterai-withCidr.xml">com.intellij.modules.cidr.lang</depends>
+  <depends optional="true" config-file="io.github.daniilpascal.specterai-withGo.xml">org.jetbrains.plugins.go</depends>
+  <depends optional="true" config-file="io.github.daniilpascal.specterai-withRust.xml">com.jetbrains.rust</depends>
+
+  <actions>
+    
+    <group
+        id="io.github.daniilpascal.specterai.SpecterAiMenu"
+        text="SpecterAI"
+        description="SpecterAI controls"
+        popup="true">
+      <add-to-group group-id="MainMenu" anchor="after" relative-to-action="ViewMenu"/>
+
+      <action
+          id="io.github.daniilpascal.specterai.ToggleSpecterAi"
+          class="io.github.daniilpascal.specterai.actions.ToggleSpecterAiAction"
+          text="AI Swarm"
+          description="Enable or disable Specter.AI swarm commands"/>
+      <action
+          id="io.github.daniilpascal.specterai.ToggleOptimHints"
+          class="io.github.daniilpascal.specterai.actions.ToggleOptimHintsAction"
+          text="Optim %"
+          description="Show or hide function Optim % badges"/>
+      <separator/>
+      <action
+          id="io.github.daniilpascal.specterai.CancelSpecterAi"
+          class="io.github.daniilpascal.specterai.actions.CancelSpecterAiAction"
+          text="Cancel AI"
+          description="Stop AI generation, diff preview, or swarm typing (Esc while busy)">
+        <keyboard-shortcut keymap="$default" first-keystroke="ESCAPE"/>
+      </action>
+      <separator/>
+      <action
+          id="io.github.daniilpascal.specterai.ShowSpecterHelp"
+          class="io.github.daniilpascal.specterai.actions.ShowSpecterHelpAction"
+          text="Help"
+          description="SpecterAI documentation: commands, tags, shortcuts"/>
+    </group>
+
+    
+    <reference ref="io.github.daniilpascal.specterai.CancelSpecterAi">
+      <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+    </reference>
+  </actions>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <typedHandler implementation="io.github.daniilpascal.specterai.command.AiCommandTypedHandler"/>
+    <notificationGroup id="Specter.AI" displayType="BALLOON"/>
+    <statusBarWidgetFactory
+        id="SpecterAiProgress"
+        implementation="io.github.daniilpascal.specterai.progress.AiProgressStatusBarWidgetFactory"/>
+    <applicationConfigurable
+        parentId="tools"
+        instance="io.github.daniilpascal.specterai.settings.AiSettingsConfigurable"
+        id="io.github.daniilpascal.specterai.AiSettingsConfigurable"
+        displayName="SpecterAI"/>
+    <editorFactoryListener implementation="io.github.daniilpascal.specterai.optim.FunctionOptimInlayController"/>
+    <editorFactoryListener implementation="io.github.daniilpascal.specterai.highlight.AiCommandSyntaxHighlighter"/>
+    <postStartupActivity implementation="io.github.daniilpascal.specterai.optim.FunctionOptimStartup"/>
+    <postStartupActivity implementation="io.github.daniilpascal.specterai.highlight.AiCommandSyntaxStartup"/>
+    <highlightInfoFilter implementation="io.github.daniilpascal.specterai.highlight.AiCommandHighlightInfoFilter"/>
+    <highlightErrorFilter implementation="io.github.daniilpascal.specterai.highlight.AiCommandHighlightErrorFilter"/>
+
+    
+    <annotator language="TEXT" implementationClass="io.github.daniilpascal.specterai.highlight.AiCommandAnnotator"/>
+  </extensions>
+</idea-plugin>
